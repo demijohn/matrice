@@ -1,0 +1,17 @@
+.idea
+.git
+docker
+!docker/php
+.dockerignore
+.php_cs.cache
+docker-compose.yml
+Dockerfile
+**/.gitignore
+**/.gitattributes
+**/config/autoload/local.php
+**/config/autoload/*.local.php
+**/config/development.config.php
+**/*.md
+**/data/**
+!**/data/cache
+vendor/

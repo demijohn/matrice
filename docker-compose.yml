@@ -1,0 +1,29 @@
+version: "3.7"
+
+services:
+  app:
+    build:
+      context: .
+    environment:
+      XDEBUG_CONFIG: "remote_host=host.docker.internal"
+      PHP_IDE_CONFIG: "serverName=matrice.docker"
+    env_file:
+      - .env
+    volumes:
+      - .:/var/www
+      - ./docker/sites-enabled:/etc/apache2/sites-enabled
+    ports:
+      - 10100:80
+      - 10101:8080
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: 99kUZP3BRFyy
+    volumes:
+      - ./docker/mysql-init:/docker-entrypoint-initdb.d
+    ports:
+      - 10106:3306
