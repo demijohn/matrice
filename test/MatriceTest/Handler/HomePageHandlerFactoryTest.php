@@ -1,8 +1,7 @@
 <?php
-
 declare(strict_types=1);
 
-namespace AppTest\Handler;
+namespace MatriceTest\Handler;
 
 use App\Handler\HomePageHandler;
 use App\Handler\HomePageHandlerFactory;

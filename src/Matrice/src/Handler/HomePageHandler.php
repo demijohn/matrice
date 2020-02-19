@@ -1,8 +1,7 @@
 <?php
-
 declare(strict_types=1);
 
-namespace App\Handler;
+namespace Matrice\Handler;
 
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\JsonResponse;
