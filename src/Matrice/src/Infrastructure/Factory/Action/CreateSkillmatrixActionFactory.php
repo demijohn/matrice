@@ -13,7 +13,7 @@ final class CreateSkillmatrixActionFactory
     {
         return new CreateSkillmatrixAction(
             $container->get('command_bus.default'),
-            $container->get(SkillmatrixRepository::class)
+            $container->get(SkillmatrixRepository::class),
         );
     }
 }

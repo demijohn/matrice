@@ -23,7 +23,7 @@ final class Skill implements JsonSerializable
     {
         return new self(
             SkillId::fromString($data['id']),
-            $data['name']
+            $data['name'],
         );
     }
 

@@ -21,7 +21,7 @@ final class CreateSkillmatrixHandler
         $skillmatrix = Skillmatrix::create(
             $command->getId(),
             $command->getPersons(),
-            $command->getSkills()
+            $command->getSkills(),
         );
 
         $this->skillmatrixRepository->add($skillmatrix);

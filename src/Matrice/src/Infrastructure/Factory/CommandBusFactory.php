@@ -26,9 +26,9 @@ final class CommandBusFactory
             new ClassNameExtractor(),
             new ContainerLocator(
                 $container,
-                $handlers
+                $handlers,
             ),
-            new HandleInflector()
+            new HandleInflector(),
         );
 
         return new CommandBus([

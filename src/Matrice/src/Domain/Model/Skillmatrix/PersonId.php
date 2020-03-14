@@ -31,7 +31,7 @@ final class PersonId implements JsonSerializable
         $this->value = $uuid;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->value->toString();
     }
@@ -41,7 +41,7 @@ final class PersonId implements JsonSerializable
         return $this->value;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->value->toString();
     }

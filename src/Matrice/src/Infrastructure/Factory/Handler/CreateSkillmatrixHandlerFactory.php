@@ -12,7 +12,7 @@ final class CreateSkillmatrixHandlerFactory
     public function __invoke(ContainerInterface $container): CreateSkillmatrixHandler
     {
         return new CreateSkillmatrixHandler(
-            $container->get(SkillmatrixRepository::class)
+            $container->get(SkillmatrixRepository::class),
         );
     }
 }

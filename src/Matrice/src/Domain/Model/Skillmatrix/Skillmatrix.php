@@ -73,6 +73,7 @@ class Skillmatrix implements JsonSerializable
     public function jsonSerialize(): array
     {
         return [
+            'id' => $this->id,
             'persons' => $this->persons,
             'skills' => $this->skills,
             'ratings' => $this->ratings,

@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 // Delegate static file requests back to the PHP built-in webserver
@@ -13,7 +12,7 @@ require 'vendor/autoload.php';
 /**
  * Self-called anonymous function that creates its own scope and keep the global namespace clean.
  */
-(function () {
+(static function (): void {
     /** @var \Psr\Container\ContainerInterface $container */
     $container = require 'config/container.php';
 

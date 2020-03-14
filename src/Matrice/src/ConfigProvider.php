@@ -8,12 +8,12 @@ use ContainerInteropDoctrine\EntityManagerFactory;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL;
 use Doctrine\ORM\Mapping;
-use Matrice\Action;
 use Matrice\Application\Command;
 use Matrice\Application\Handler;
-use Matrice\Domain\Model;
+use Matrice\Domain\Model\Skillmatrix;
 use Matrice\Infrastructure\Doctrine\Type;
 use Matrice\Infrastructure\Factory;
+use Matrice\Infrastructure\Factory\Repository;
 
 final class ConfigProvider
 {
@@ -43,7 +43,7 @@ final class ConfigProvider
 
                 Handler\CreateSkillmatrixHandler::class => Factory\Handler\CreateSkillmatrixHandlerFactory::class,
 
-                Model\Skillmatrix\SkillmatrixRepository::class => Factory\Repository\DoctrineSkillmatrixRepositoryFactory::class,
+                Skillmatrix\SkillmatrixRepository::class => Repository\DoctrineSkillmatrixRepositoryFactory::class,
             ],
         ];
     }
@@ -93,7 +93,7 @@ final class ConfigProvider
 
                     'second_level_cache' => [
                         'enabled' => true,
-                        'default_lifetime' => 3600,
+                        'default_lifetime' => 3_600,
                         'default_lock_lifetime' => 60,
                         'file_lock_region_directory' => '',
                         'regions' => [],

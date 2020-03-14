@@ -11,7 +11,7 @@ final class DoctrineSkillmatrixRepositoryFactory
     public function __invoke(ContainerInterface $container): DoctrineSkillmatrixRepository
     {
         return new DoctrineSkillmatrixRepository(
-            $container->get('doctrine.entity_manager.orm_default')
+            $container->get('doctrine.entity_manager.orm_default'),
         );
     }
 }

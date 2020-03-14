@@ -23,7 +23,7 @@ final class Person implements JsonSerializable
     {
         return new self(
             PersonId::fromString($data['id']),
-            $data['name']
+            $data['name'],
         );
     }
 

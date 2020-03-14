@@ -21,8 +21,13 @@ final class Rating implements JsonSerializable
 
     private DateTime $date;
 
-    public static function create(PersonId $personId, SkillId $skillId, Reviewer $reviewer, int $score, string $note): self
-    {
+    public static function create(
+        PersonId $personId,
+        SkillId $skillId,
+        Reviewer $reviewer,
+        int $score,
+        string $note
+    ): self {
         Assertion::between($score, 0, 5);
 
         return new self(
@@ -31,12 +36,18 @@ final class Rating implements JsonSerializable
             $reviewer,
             $score,
             $note,
-            new DateTime('now')
+            new DateTime('now'),
         );
     }
 
-    private function __construct(PersonId $personId, SkillId $skillId, Reviewer $reviewer, int $score, string $note, DateTime $date)
-    {
+    private function __construct(
+        PersonId $personId,
+        SkillId $skillId,
+        Reviewer $reviewer,
+        int $score,
+        string $note,
+        DateTime $date
+    ) {
         $this->personId = $personId;
         $this->skillId = $skillId;
         $this->reviewer = $reviewer;
