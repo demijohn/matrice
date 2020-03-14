@@ -3,53 +3,130 @@ declare(strict_types=1);
 
 namespace Matrice;
 
-/**
- * The configuration provider for the App module
- *
- * @see https://docs.laminas.dev/laminas-component-installer/
- */
-class ConfigProvider
+use ContainerInteropDoctrine\ConnectionFactory;
+use ContainerInteropDoctrine\EntityManagerFactory;
+use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
+use Doctrine\DBAL;
+use Doctrine\ORM\Mapping;
+use Matrice\Action;
+use Matrice\Application\Command;
+use Matrice\Application\Handler;
+use Matrice\Domain\Model;
+use Matrice\Infrastructure\Doctrine\Type;
+use Matrice\Infrastructure\Factory;
+
+final class ConfigProvider
 {
-    /**
-     * Returns the configuration array
-     *
-     * To add a bit of a structure, each section is defined in a separate
-     * method which returns an array with its configuration.
-     *
-     */
-    public function __invoke() : array
+    public function __invoke(): array
     {
         return [
             'dependencies' => $this->getDependencies(),
-            'templates'    => $this->getTemplates(),
+            'templates' => $this->getTemplates(),
+            'doctrine' => $this->getDoctrine(),
+            'command_bus' => $this->getCommandBus(),
         ];
     }
 
-    /**
-     * Returns the container dependencies
-     */
-    public function getDependencies() : array
+    private function getDependencies(): array
     {
         return [
             'invokables' => [
-                Handler\PingHandler::class => Handler\PingHandler::class,
+                Mapping\UnderscoreNamingStrategy::class => Mapping\UnderscoreNamingStrategy::class,
             ],
             'factories'  => [
-                Handler\HomePageHandler::class => Handler\HomePageHandlerFactory::class,
+                'command_bus.default' => Factory\CommandBusFactory::class,
+
+                'doctrine.connection.orm_default' => ConnectionFactory::class,
+                'doctrine.entity_manager.orm_default' => EntityManagerFactory::class,
+
+                Action\CreateSkillmatrixAction::class => Factory\Action\CreateSkillmatrixActionFactory::class,
+
+                Handler\CreateSkillmatrixHandler::class => Factory\Handler\CreateSkillmatrixHandlerFactory::class,
+
+                Model\Skillmatrix\SkillmatrixRepository::class => Factory\Repository\DoctrineSkillmatrixRepositoryFactory::class,
             ],
         ];
     }
 
-    /**
-     * Returns the templates configuration
-     */
-    public function getTemplates() : array
+    private function getTemplates(): array
     {
         return [
             'paths' => [
                 'app'    => [__DIR__ . '/../templates/app'],
                 'error'  => [__DIR__ . '/../templates/error'],
                 'layout' => [__DIR__ . '/../templates/layout'],
+            ],
+        ];
+    }
+
+    private function getDoctrine(): array
+    {
+        return [
+            'connection' => [
+                'orm_default' => [
+                    'driver_class' => DBAL\Driver\PDOMySql\Driver::class,
+                    'params' => [
+                        'host' => getenv('MYSQL_HOST'),
+                        'user' => getenv('MYSQL_USER'),
+                        'password' => getenv('MYSQL_PASSWORD'),
+                        'serverVersion' => '8.0.18',
+                        'dbname' => 'matrice',
+                        'charset' => 'utf8mb4',
+                        'driverOptions' => [
+                            'x_reconnect_attempts' => 1, //Number of reconnects per execute. Default value is 0
+                        ],
+                    ],
+                ],
+            ],
+
+            'configuration' => [
+                'orm_default' => [
+                    'metadata_cache' => 'array',
+                    'query_cache' => 'array',
+
+                    'result_cache' => 'array',
+                    'hydration_cache' => 'array',
+
+                    'auto_generate_proxy_classes' => false,
+
+                    'naming_strategy' => Mapping\UnderscoreNamingStrategy::class,
+
+                    'second_level_cache' => [
+                        'enabled' => true,
+                        'default_lifetime' => 3600,
+                        'default_lock_lifetime' => 60,
+                        'file_lock_region_directory' => '',
+                        'regions' => [],
+                    ],
+                ],
+            ],
+
+            'driver' => [
+                'orm_default' => [
+                    'class' => MappingDriverChain::class,
+                    'drivers' => [
+                        'Matrice\Domain\Model' => 'matrice_model',
+                    ],
+                ],
+
+                'matrice_model' => [
+                    'class' => Mapping\Driver\AnnotationDriver::class,
+                    'cache' => 'array',
+                    'paths' => __DIR__ . '/Domain/Model',
+                ],
+            ],
+
+            'types' => [
+                Type\PersonCollectionType::NAME => Type\PersonCollectionType::class,
+            ],
+        ];
+    }
+
+    private function getCommandBus(): array
+    {
+        return [
+            'handlers' => [
+                Command\CreateSkillmatrix::class => Handler\CreateSkillmatrixHandler::class,
             ],
         ];
     }

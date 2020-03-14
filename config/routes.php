@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 use Mezzio\Application;
@@ -32,7 +31,7 @@ use Psr\Container\ContainerInterface;
  *     'contact'
  * );
  */
-return function (Application $app, MiddlewareFactory $factory, ContainerInterface $container) : void {
-    $app->get('/', App\Handler\HomePageHandler::class, 'home');
-    $app->get('/api/ping', App\Handler\PingHandler::class, 'api.ping');
+return function (Application $app, MiddlewareFactory $factory, ContainerInterface $container) : void
+{
+    $app->post('/skillmatrix', Matrice\Action\CreateSkillmatrixAction::class, 'skillmatrix.create');
 };
