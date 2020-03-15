@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Matrice\Domain\Model\Skillmatrix\Exceptions;
+namespace Matrice\Domain\Model\Skillmatrix\Exception;
 
 use Exception;
 

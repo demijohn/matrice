@@ -40,6 +40,7 @@ final class ConfigProvider
                 'doctrine.entity_manager.orm_default' => EntityManagerFactory::class,
 
                 Action\CreateSkillmatrixAction::class => Factory\Action\CreateSkillmatrixActionFactory::class,
+                Action\DisplaySkillmatrixAction::class => Factory\Action\DisplaySkillmatrixActionFactory::class,
 
                 Handler\CreateSkillmatrixHandler::class => Factory\Handler\CreateSkillmatrixHandlerFactory::class,
 

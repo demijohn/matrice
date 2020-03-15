@@ -5,7 +5,7 @@ namespace Matrice\Domain\Model\Skillmatrix;
 
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
-use Matrice\Domain\Model\Skillmatrix\Exceptions\RatingAlreadyExists;
+use Matrice\Domain\Model\Skillmatrix\Exception\RatingAlreadyExists;
 
 /**
  * @ORM\Entity
@@ -77,6 +77,16 @@ class Skillmatrix implements JsonSerializable
     }
 
     public function jsonSerialize(): array
+    {
+        return [
+            'id' => $this->id,
+            'persons' => $this->persons,
+            'skills' => $this->skills,
+            'ratings' => $this->ratings,
+        ];
+    }
+
+    public function getArrayCopy(): array
     {
         return [
             'id' => $this->id,

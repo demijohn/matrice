@@ -33,5 +33,6 @@ use Psr\Container\ContainerInterface;
  */
 return function (Application $app, MiddlewareFactory $factory, ContainerInterface $container) : void
 {
+    $app->get('/skillmatrix/{id}', Matrice\Action\DisplaySkillmatrixAction::class, 'skillmatrix');
     $app->post('/skillmatrix', Matrice\Action\CreateSkillmatrixAction::class, 'skillmatrix.create');
 };
