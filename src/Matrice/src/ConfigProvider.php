@@ -118,6 +118,12 @@ final class ConfigProvider
 
             'types' => [
                 Type\PersonCollectionType::NAME => Type\PersonCollectionType::class,
+                Type\SkillCollectionType::NAME => Type\SkillCollectionType::class,
+                Type\RatingCollectionType::NAME => Type\RatingCollectionType::class,
+                Type\SkillmatrixIdType::NAME => Type\SkillmatrixIdType::class,
+                Type\PersonIdType::NAME => Type\PersonIdType::class,
+                Type\ReviewerIdType::NAME => Type\ReviewerIdType::class,
+                Type\SkillIdType::NAME => Type\SkillIdType::class,
             ],
         ];
     }

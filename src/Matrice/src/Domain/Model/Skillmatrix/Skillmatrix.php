@@ -23,8 +23,14 @@ class Skillmatrix implements JsonSerializable
      */
     private PersonCollection $persons;
 
+    /**
+     * @ORM\Column(type="skill_collection")
+     */
     private SkillCollection $skills;
 
+    /**
+     * @ORM\Column(type="rating_collection")
+     */
     private ?RatingCollection $ratings;
 
     public static function create(SkillmatrixId $id, PersonCollection $persons, SkillCollection $skills): self
