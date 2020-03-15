@@ -29,7 +29,7 @@ class Skillmatrix implements JsonSerializable
     private SkillCollection $skills;
 
     /**
-     * @ORM\Column(type="rating_collection")
+     * @ORM\Column(type="rating_collection", nullable=true)
      */
     private ?RatingCollection $ratings;
 

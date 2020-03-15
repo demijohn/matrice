@@ -6,8 +6,9 @@ namespace Matrice\Domain\Model\Skillmatrix;
 use ArrayIterator;
 use Countable;
 use IteratorAggregate;
+use JsonSerializable;
 
-final class RatingCollection implements IteratorAggregate, Countable
+final class RatingCollection implements IteratorAggregate, Countable, JsonSerializable
 {
     /**
      * @var Rating[]
@@ -30,5 +31,10 @@ final class RatingCollection implements IteratorAggregate, Countable
     public function count(): int
     {
         return \count($this->ratings);
+    }
+
+    public function jsonSerialize(): array
+    {
+        return $this->ratings;
     }
 }
