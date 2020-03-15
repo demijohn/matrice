@@ -19,6 +19,7 @@ final class SkillmatrixIdType extends UuidType
     public function convertToPHPValue($value, AbstractPlatform $platform): ?SkillmatrixId
     {
         $uuid = parent::convertToPHPValue($value, $platform);
+
         return $uuid ? SkillmatrixId::fromUuid($uuid) : null;
     }
 
