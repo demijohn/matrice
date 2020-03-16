@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Matrice\Action;
 
 use Assert\Assert;
-use Laminas\Diactoros\Response\TextResponse;
 use League\Tactician\CommandBus;
 use Matrice\Application\Command\CreateSkillmatrix;
 use Matrice\Domain\Model\Skillmatrix\PersonCollection;
@@ -20,10 +19,16 @@ final class CreateSkillmatrixAction implements RequestHandlerInterface
 
     private SkillmatrixRepository $skillmatrixRepository;
 
-    public function __construct(CommandBus $commandBus, SkillmatrixRepository $skillmatrixRepository)
-    {
+    private DisplaySkillmatrixAction $displayAction;
+
+    public function __construct(
+        CommandBus $commandBus,
+        SkillmatrixRepository $skillmatrixRepository,
+        DisplaySkillmatrixAction $displayAction
+    ) {
         $this->commandBus = $commandBus;
         $this->skillmatrixRepository = $skillmatrixRepository;
+        $this->displayAction = $displayAction;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -46,6 +51,8 @@ final class CreateSkillmatrixAction implements RequestHandlerInterface
         $command = CreateSkillmatrix::create($skillmatrixId, $persons, $skills);
         $this->commandBus->handle($command);
 
-        return new TextResponse('OK BRO');
+        $displayRequest = $request->withAttribute('id', (string) $command->getId());
+
+        return $this->displayAction->handle($displayRequest)->withStatus(201);
     }
 }
