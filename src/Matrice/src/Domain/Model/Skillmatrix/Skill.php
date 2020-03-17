@@ -12,13 +12,6 @@ final class Skill implements JsonSerializable
 
     private string $name;
 
-    public static function create(SkillId $id, string $name): self
-    {
-        Assertion::betweenLength($name, 3, 255);
-
-        return new self($id, $name);
-    }
-
     public static function fromArray(array $data): self
     {
         return new self(
@@ -29,6 +22,8 @@ final class Skill implements JsonSerializable
 
     private function __construct(SkillId $id, string $name)
     {
+        Assertion::betweenLength($name, 3, 255);
+
         $this->id = $id;
         $this->name = $name;
     }

@@ -12,13 +12,6 @@ final class Person implements JsonSerializable
 
     private string $name;
 
-    public static function create(PersonId $id, string $name): self
-    {
-        Assertion::betweenLength($name, 3, 50);
-
-        return new self($id, $name);
-    }
-
     public static function fromArray(array $data): self
     {
         return new self(
@@ -29,6 +22,8 @@ final class Person implements JsonSerializable
 
     private function __construct(PersonId $id, string $name)
     {
+        Assertion::betweenLength($name, 3, 50);
+
         $this->id = $id;
         $this->name = $name;
     }

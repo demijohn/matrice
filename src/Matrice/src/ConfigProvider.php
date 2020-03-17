@@ -41,8 +41,10 @@ final class ConfigProvider
 
                 Action\CreateSkillmatrixAction::class => Factory\Action\CreateSkillmatrixActionFactory::class,
                 Action\DisplaySkillmatrixAction::class => Factory\Action\DisplaySkillmatrixActionFactory::class,
+                Action\RatePersonAction::class => Factory\Action\RatePersonActionFactory::class,
 
                 Handler\CreateSkillmatrixHandler::class => Factory\Handler\CreateSkillmatrixHandlerFactory::class,
+                Handler\RatePersonHandler::class => Factory\Handler\RatePersonHandlerFactory::class,
 
                 Skillmatrix\SkillmatrixRepository::class => Repository\DoctrineSkillmatrixRepositoryFactory::class,
             ],
@@ -134,6 +136,7 @@ final class ConfigProvider
         return [
             'handlers' => [
                 Command\CreateSkillmatrix::class => Handler\CreateSkillmatrixHandler::class,
+                Command\RatePerson::class => Handler\RatePersonHandler::class,
             ],
         ];
     }

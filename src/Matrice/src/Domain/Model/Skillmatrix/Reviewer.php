@@ -8,20 +8,22 @@ use JsonSerializable;
 
 final class Reviewer implements JsonSerializable
 {
-
     private ReviewerId $id;
 
     private string $name;
 
-    public static function create(ReviewerId $id, string $name): self
+    public static function fromArray(array $data): self
     {
-        Assertion::betweenLength($name, 3, 50);
-
-        return new self($id, $name);
+        return new self(
+            ReviewerId::fromString($data['id']),
+            $data['name'],
+        );
     }
 
     private function __construct(ReviewerId $id, string $name)
     {
+        Assertion::betweenLength($name, 3, 50);
+
         $this->id = $id;
         $this->name = $name;
     }

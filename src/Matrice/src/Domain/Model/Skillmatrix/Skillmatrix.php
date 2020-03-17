@@ -52,11 +52,9 @@ class Skillmatrix implements JsonSerializable
             throw new RatingAlreadyExists('Rating already exists.');
         }
 
-        if ($this->ratings === null) {
-            $this->ratings = new RatingCollection($rating);
-        }
-
-        $this->ratings = new RatingCollection($this->ratings->getIterator(), $rating);
+        $this->ratings = $this->ratings === null ?
+            new RatingCollection($rating) :
+            new RatingCollection($rating, ...$this->ratings->getIterator());
     }
 
     public function getRatings(): RatingCollection
@@ -66,8 +64,12 @@ class Skillmatrix implements JsonSerializable
 
     private function ratingExists(Rating $rating): bool
     {
+        if ($this->ratings === null) {
+            return false;
+        }
+
         /** @var Rating $existingRating */
-        foreach ($this->ratings as $existingRating) {
+        foreach ($this->ratings->getIterator() as $existingRating) {
             if ($rating->equals($existingRating)) {
                 return true;
             }

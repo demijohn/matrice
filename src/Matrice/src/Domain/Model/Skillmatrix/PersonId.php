@@ -48,6 +48,6 @@ final class PersonId implements JsonSerializable
 
     public function equals(self $personId): bool
     {
-        return $this->value === $personId->toUuid();
+        return $this->value->equals($personId->toUuid());
     }
 }

@@ -49,6 +49,6 @@ final class SkillId implements JsonSerializable
 
     public function equals(self $skillId): bool
     {
-        return $this->value === $skillId->toUuid();
+        return $this->value->equals($skillId->toUuid());
     }
 }

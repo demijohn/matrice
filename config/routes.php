@@ -35,4 +35,5 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
 {
     $app->get('/skillmatrix/{id}', Matrice\Action\DisplaySkillmatrixAction::class, 'skillmatrix');
     $app->post('/skillmatrix', Matrice\Action\CreateSkillmatrixAction::class, 'skillmatrix.create');
+    $app->patch('/skillmatrix/{id}/ratings', Matrice\Action\RatePersonAction::class, 'skillmatrix.rating');
 };

@@ -19,7 +19,7 @@ final class Rating implements JsonSerializable
 
     private string $note;
 
-    private DateTime $date;
+    private DateTime $created;
 
     public static function create(
         PersonId $personId,
@@ -40,20 +40,32 @@ final class Rating implements JsonSerializable
         );
     }
 
+    public static function fromArray(array $data): self
+    {
+        return new self(
+            PersonId::fromString($data['personId']),
+            SkillId::fromString($data['skillId']),
+            Reviewer::fromArray($data['reviewer']),
+            $data['score'],
+            $data['note'],
+            new DateTime($data['created']),
+        );
+    }
+
     private function __construct(
         PersonId $personId,
         SkillId $skillId,
         Reviewer $reviewer,
         int $score,
         string $note,
-        DateTime $date
+        DateTime $created
     ) {
         $this->personId = $personId;
         $this->skillId = $skillId;
         $this->reviewer = $reviewer;
         $this->score = $score;
         $this->note = $note;
-        $this->date = $date;
+        $this->created = $created;
     }
 
     public function getSkillId(): SkillId
@@ -89,7 +101,7 @@ final class Rating implements JsonSerializable
             'reviewer' => $this->reviewer,
             'score' => $this->score,
             'note' => $this->note,
-            'date' => $this->date,
+            'created' => $this->created->format(DateTime::ATOM),
         ];
     }
 
