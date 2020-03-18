@@ -20,7 +20,7 @@ final class DoctrineSkillmatrixRepository implements SkillmatrixRepository
 
     public function get(SkillmatrixId $skillmatrixId): Skillmatrix
     {
-        /** @var Skillmatrix $skillmatrix */
+        /** @var Skillmatrix|null $skillmatrix */
         $skillmatrix = $this->em->find(Skillmatrix::class, $skillmatrixId);
 
         if ($skillmatrix === null) {

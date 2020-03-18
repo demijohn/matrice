@@ -57,7 +57,7 @@ class Skillmatrix implements JsonSerializable
             new RatingCollection($rating, ...$this->ratings->getIterator());
     }
 
-    public function getRatings(): RatingCollection
+    public function getRatings(): ?RatingCollection
     {
         return $this->ratings;
     }
