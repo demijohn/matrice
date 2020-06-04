@@ -45,8 +45,8 @@ final class CreateSkillmatrixAction implements RequestHandlerInterface
 
         $skillmatrixId = $this->skillmatrixRepository->nextIdentity();
 
-        $persons = PersonCollection::jsonDeserialize($data['persons']);
-        $skills = SkillCollection::jsonDeserialize($data['skills']);
+        $persons = PersonCollection::fromArray($data['persons']);
+        $skills = SkillCollection::fromArray($data['skills']);
 
         $command = CreateSkillmatrix::create($skillmatrixId, $persons, $skills);
         $this->commandBus->handle($command);

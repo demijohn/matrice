@@ -15,7 +15,7 @@ final class PersonCollection implements IteratorAggregate, Countable, JsonSerial
      */
     private array $persons;
 
-    public static function jsonDeserialize(array $data): self
+    public static function fromArray(array $data): self
     {
         $persons = array_map([Person::class, 'fromArray'], $data);
 

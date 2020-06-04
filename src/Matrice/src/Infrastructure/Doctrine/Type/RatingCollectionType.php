@@ -24,7 +24,7 @@ final class RatingCollectionType extends JsonType
             return null;
         }
 
-        return RatingCollection::jsonDeserialize($value);
+        return RatingCollection::fromArray($value);
     }
 
     public function requiresSQLCommentHint(AbstractPlatform $platform): bool

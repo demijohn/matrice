@@ -15,7 +15,7 @@ final class RatingCollection implements IteratorAggregate, Countable, JsonSerial
      */
     private array $ratings;
 
-    public static function jsonDeserialize(array $data): self
+    public static function fromArray(array $data): self
     {
         $ratings = array_map([Rating::class, 'fromArray'], $data);
 

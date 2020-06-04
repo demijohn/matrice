@@ -15,7 +15,7 @@ final class SkillCollection implements IteratorAggregate, Countable, JsonSeriali
      */
     private array $skills;
 
-    public static function jsonDeserialize(array $data): self
+    public static function fromArray(array $data): self
     {
         $skills = array_map([Skill::class, 'fromArray'], $data);
 

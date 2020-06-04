@@ -24,7 +24,7 @@ final class SkillCollectionType extends JsonType
             return null;
         }
 
-        return SkillCollection::jsonDeserialize($value);
+        return SkillCollection::fromArray($value);
     }
 
     public function requiresSQLCommentHint(AbstractPlatform $platform): bool

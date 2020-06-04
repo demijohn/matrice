@@ -24,7 +24,7 @@ final class PersonCollectionType extends JsonType
             return null;
         }
 
-        return PersonCollection::jsonDeserialize($value);
+        return PersonCollection::fromArray($value);
     }
 
     public function requiresSQLCommentHint(AbstractPlatform $platform): bool
