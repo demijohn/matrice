@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace Matrice\Action;
 
-use Assert\Assert;
 use League\Tactician\CommandBus;
 use Matrice\Application\Command\CreateSkillmatrix;
 use Matrice\Domain\Model\Skillmatrix\PersonCollection;
 use Matrice\Domain\Model\Skillmatrix\SkillCollection;
 use Matrice\Domain\Model\Skillmatrix\SkillmatrixRepository;
+use Matrice\Library\Validation\Validate;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -36,7 +36,7 @@ final class CreateSkillmatrixAction implements RequestHandlerInterface
         /** @var array $data */
         $data = $request->getParsedBody() ?? [];
 
-        Assert::lazy()
+        Validate::lazy()
             ->that($data, '$')->tryAll()
             ->keyExists('persons')->keyExists('skills')
             ->that($data['persons'] ?? [], '$.persons')->isArray()
