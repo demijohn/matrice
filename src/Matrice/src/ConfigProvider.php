@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace Matrice;
 
-use ContainerInteropDoctrine\ConnectionFactory;
-use ContainerInteropDoctrine\EntityManagerFactory;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL;
 use Doctrine\ORM\Mapping;
@@ -14,12 +12,17 @@ use Matrice\Domain\Model\Skillmatrix;
 use Matrice\Infrastructure\Doctrine\Type;
 use Matrice\Infrastructure\Factory;
 use Matrice\Infrastructure\Factory\Repository;
+use Matrice\Library;
+use Mezzio\Application;
+use Roave\PsrContainerDoctrine\ConnectionFactory;
+use Roave\PsrContainerDoctrine\EntityManagerFactory;
 
 final class ConfigProvider
 {
     public function __invoke(): array
     {
         return [
+            'parameters' => $this->getParameters(),
             'dependencies' => $this->getDependencies(),
             'templates' => $this->getTemplates(),
             'doctrine' => $this->getDoctrine(),
@@ -27,16 +30,33 @@ final class ConfigProvider
         ];
     }
 
+    private function getParameters(): array
+    {
+        return [
+            'db' => 'mysql',
+        ];
+    }
+
     private function getDependencies(): array
     {
         return [
+            'aliases' => [
+                'doctrine.connection.orm_default' => 'doctrine.connection.' . (getenv('DB') ?: '%db%'),
+            ],
+            'delegators' => [
+                Application::class => [
+                    Factory\PipelineDelegator::class,
+                    Factory\RoutesDelegator::class,
+                ],
+            ],
             'invokables' => [
                 Mapping\UnderscoreNamingStrategy::class => Mapping\UnderscoreNamingStrategy::class,
             ],
             'factories'  => [
                 'command_bus.default' => Factory\CommandBusFactory::class,
 
-                'doctrine.connection.orm_default' => ConnectionFactory::class,
+                'doctrine.connection.mysql' => [ConnectionFactory::class, 'mysql'],
+                'doctrine.connection.sqlite' => [ConnectionFactory::class, 'sqlite'],
                 'doctrine.entity_manager.orm_default' => EntityManagerFactory::class,
 
                 Action\CreateSkillmatrixAction::class => Factory\Action\CreateSkillmatrixActionFactory::class,
@@ -66,8 +86,9 @@ final class ConfigProvider
     {
         return [
             'connection' => [
-                'orm_default' => [
+                'mysql' => [
                     'driver_class' => DBAL\Driver\PDOMySql\Driver::class,
+                    'configuration' => 'orm_default',
                     'params' => [
                         'host' => getenv('MYSQL_HOST'),
                         'user' => getenv('MYSQL_USER'),
@@ -78,6 +99,14 @@ final class ConfigProvider
                         'driverOptions' => [
                             'x_reconnect_attempts' => 1, //Number of reconnects per execute. Default value is 0
                         ],
+                    ],
+                ],
+                'sqlite' => [
+                    'driver_class' => DBAL\Driver\PDOSqlite\Driver::class,
+                    'configuration' => 'test',
+                    'params' => [
+                        'memory' => true,
+                        'path' => getenv('SQLITE_PATH') ?: null,
                     ],
                 ],
             ],
@@ -100,6 +129,19 @@ final class ConfigProvider
                         'default_lock_lifetime' => 60,
                         'file_lock_region_directory' => '',
                         'regions' => [],
+                    ],
+                ],
+
+                'test' => [
+                    'metadata_cache' => 'array',
+                    'query_cache' => 'array',
+                    'result_cache' => 'array',
+                    'hydration_cache' => 'array',
+
+                    'driver' => 'orm_default',
+                    'auto_generate_proxy_classes' => true,
+                    'second_level_cache' => [
+                        'enabled' => false,
                     ],
                 ],
             ],

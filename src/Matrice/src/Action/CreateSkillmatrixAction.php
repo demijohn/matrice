@@ -39,9 +39,27 @@ final class CreateSkillmatrixAction implements RequestHandlerInterface
         Validate::lazy()
             ->that($data, '$')->tryAll()
             ->keyExists('persons')->keyExists('skills')
-            ->that($data['persons'] ?? [], '$.persons')->isArray()
-            ->that($data['skills'] ?? [], '$.skills')->isArray()
+            ->that($data['persons'] ?? [], '$.persons')->isArray()->notEmpty()
+            ->that($data['skills'] ?? [], '$.skills')->isArray()->notEmpty()
             ->verifyNow();
+
+        foreach ($data['persons'] as $person) {
+            Validate::lazy()
+                ->that($person, '$.person')->tryAll()
+                ->keyExists('id')->keyExists('name')
+                ->that($person['id'] ?? null, '$.person.id')->uuid()
+                ->that($person['name'] ?? '', '$.person.name')->minLength(1)
+                ->verifyNow();
+        }
+
+        foreach ($data['skills'] as $skill) {
+            Validate::lazy()
+                ->that($skill, '$.skill')->tryAll()
+                ->keyExists('id')->keyExists('name')
+                ->that($skill['id'] ?? null, '$.skill.id')->uuid()
+                ->that($skill['name'] ?? '', '$.skill.name')->minLength(1)
+                ->verifyNow();
+        }
 
         $skillmatrixId = $this->skillmatrixRepository->nextIdentity();
 
