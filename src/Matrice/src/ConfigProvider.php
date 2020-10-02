@@ -12,7 +12,6 @@ use Matrice\Domain\Model\Skillmatrix;
 use Matrice\Infrastructure\Doctrine\Type;
 use Matrice\Infrastructure\Factory;
 use Matrice\Infrastructure\Factory\Repository;
-use Matrice\Library;
 use Mezzio\Application;
 use Roave\PsrContainerDoctrine\ConnectionFactory;
 use Roave\PsrContainerDoctrine\EntityManagerFactory;
@@ -52,7 +51,7 @@ final class ConfigProvider
             'invokables' => [
                 Mapping\UnderscoreNamingStrategy::class => Mapping\UnderscoreNamingStrategy::class,
             ],
-            'factories'  => [
+            'factories' => [
                 'command_bus.default' => Factory\CommandBusFactory::class,
 
                 'doctrine.connection.mysql' => [ConnectionFactory::class, 'mysql'],
@@ -75,8 +74,8 @@ final class ConfigProvider
     {
         return [
             'paths' => [
-                'app'    => [__DIR__ . '/../templates/app'],
-                'error'  => [__DIR__ . '/../templates/error'],
+                'app' => [__DIR__ . '/../templates/app'],
+                'error' => [__DIR__ . '/../templates/error'],
                 'layout' => [__DIR__ . '/../templates/layout'],
             ],
         ];
@@ -97,7 +96,8 @@ final class ConfigProvider
                         'dbname' => 'matrice',
                         'charset' => 'utf8mb4',
                         'driverOptions' => [
-                            'x_reconnect_attempts' => 1, //Number of reconnects per execute. Default value is 0
+                            //Number of reconnects per execute. Default value is 0
+                            'x_reconnect_attempts' => 1,
                         ],
                     ],
                 ],

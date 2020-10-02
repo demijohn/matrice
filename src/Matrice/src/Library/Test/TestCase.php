@@ -17,10 +17,7 @@ abstract class TestCase extends BaseTestCase
         'Content-Type' => 'application/json',
     ];
 
-    /**
-     * @var Application
-     */
-    protected $app;
+    protected Application $app;
 
     protected function get(string $uri, array $headers = [], array $queryParams = []): ResponseInterface
     {
@@ -37,7 +34,6 @@ abstract class TestCase extends BaseTestCase
         $request->getBody()
             ->write(json_encode($data, JSON_THROW_ON_ERROR));
 
-
         return $this->app->handle($request);
     }
 
@@ -47,6 +43,7 @@ abstract class TestCase extends BaseTestCase
         $request = new ServerRequest([], [], $uri, 'PATCH', 'php://memory', $headers);
         $request->getBody()
             ->write(json_encode($data, JSON_THROW_ON_ERROR));
+
         return $this->app->handle($request);
     }
 
@@ -55,7 +52,8 @@ abstract class TestCase extends BaseTestCase
         $this->assertSame($statusCode, $response->getStatusCode());
 
         $body = (string) $response->getBody();
-        if (null !== $subset) {
+
+        if ($subset !== null) {
             $resource = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
 
             $expected = array_replace_recursive($resource, $subset);

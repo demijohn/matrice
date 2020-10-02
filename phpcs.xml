@@ -7,9 +7,10 @@
     <arg name="colors"/>
     <arg name="extensions" value="php"/>
 
-    <file>public/</file>
     <file>src/</file>
     <file>test/</file>
+
+    <exclude-pattern>/src/Matrice/src/Library/Validation/Validate.php</exclude-pattern>
 
     <rule ref="PSR2">
         <!-- Exclude LineLength sniff -->
@@ -23,6 +24,7 @@
         <exclude name="SlevomatCodingStandard.ControlStructures.NewWithoutParentheses" />
         <exclude name="SlevomatCodingStandard.ControlStructures.RequireYodaComparison" />
         <exclude name="SlevomatCodingStandard.ControlStructures.RequireMultiLineTernaryOperator.MultiLineTernaryOperatorNotUsed"/>
+        <exclude name="SlevomatCodingStandard.ControlStructures.DisallowShortTernaryOperator"/>
         <exclude name="SlevomatCodingStandard.Commenting.RequireOneLinePropertyDocComment" />
         <exclude name="SlevomatCodingStandard.Commenting.RequireOneLineDocComment.MultiLineDocComment"/>
         <exclude name="SlevomatCodingStandard.Files.TypeNameMatchesFileName" />
@@ -85,6 +87,12 @@
     <rule ref="SlevomatCodingStandard.Namespaces.UnusedUses">
         <properties>
             <property name="searchAnnotations" type="bool" value="true"/>
+        </properties>
+    </rule>
+
+    <rule ref="SlevomatCodingStandard.Classes.TraitUseSpacing">
+        <properties>
+            <property name="linesCountBeforeFirstUse" value="0"/>
         </properties>
     </rule>
 

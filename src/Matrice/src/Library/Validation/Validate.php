@@ -8,7 +8,7 @@ use Assert\LazyAssertion;
 
 final class Validate extends Assert
 {
-    protected static $lazyAssertionExceptionClass = ValidationFailedException::class;
+    protected static $lazyAssertionExceptionClass = ValidationFailed::class;
 
     public static function lazy(): LazyAssertion
     {

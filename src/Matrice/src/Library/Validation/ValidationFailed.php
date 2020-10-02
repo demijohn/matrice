@@ -8,7 +8,7 @@ use Assert\LazyAssertionException;
 use Mezzio\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
 use Mezzio\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
 
-final class ValidationFailedException extends LazyAssertionException implements ProblemDetailsExceptionInterface
+final class ValidationFailed extends LazyAssertionException implements ProblemDetailsExceptionInterface
 {
     use CommonProblemDetailsExceptionTrait;
 
@@ -25,6 +25,7 @@ final class ValidationFailedException extends LazyAssertionException implements 
             'errors' => array_reduce($errors, static function (array $errors, AssertionFailedException $error): array {
                 $path = $error->getPropertyPath();
                 $errors[$path][] = $error->getMessage();
+
                 return $errors;
             }, []),
         ];
