@@ -1,0 +1,77 @@
+FORMAT: 1A
+HOST:
+
+# Skillmatrix API
+
+# Group Skillmatrix
+
+## Skillmatrix Collection [/skillmatrix]
+
+### Create a new Skillmatrix [POST]
+
++ Request (application/json)
+    + Attributes (Skillmatrix Base)
+
++ Response 201 (application/hal+json)
+    + Attributes (Skillmatrix Resource)
+
+## Skillmatrix [/skillmatrix/{id}]
+
++ Parameters
+    + id: `1aa272d3-2c06-46f6-825d-e35228084b82` (string) - Skillmatrix ID in UUID format
+
+### Display a Skillmatrix [GET]
+
++ Response 200 (application/hal+json)
+    + Attributes (Skillmatrix Resource)
+
+## Skillmatrix ratings [/skillmatrix/{id}/ratings]
+
++ Parameters
+    + id: `1aa272d3-2c06-46f6-825d-e35228084b82` (string, required) - Skillmatrix ID in UUID format
+
+### Add Rating to Skillmatrix [PUT]
+
++ Request (application/json)
+    + Attributes (Rating)
+
++ Response 204 (application/hal+json)
+    + Attributes (Skillmatrix Resource)
+
++ Response 404
++ Response 422
+
+# Data Structures
+
+## Skillmatrix (object)
++ id: `1aa272d3-2c06-46f6-825d-e35228084b82` (string, required)
++ Include Skillmatrix Base
+
+## Skillmatrix Base (object)
++ persons (array[Person])
++ skills (array[Skill])
+
+## Person (object)
++ id: `8ffcfb72-f406-4e61-b1e8-ba5412054319` (string, required)
++ name: `Michal` (string, required)
+
+## Reviewer (object)
++ id: `f52b5160-7e31-44c7-8bff-117e2ebe0aa1` (string, required)
++ name: `Karol` (string, required)
+
+## Skill (object)
++ id: `9ea718ef-fdd1-4367-a832-dd1ae4956402` (string, required)
++ name: `Programming Language` (string, required)
+
+## Rating (object)
++ personId: `1df4a735-88b3-4590-a1fe-cde6e8c1bd73` (string, required)
++ skillId: `0ae8b2a5-9b88-41a0-acd6-e929578de254` (string, required),
++ reviewer (Reviewer)
++ score: 3 (number, required)
++ note: `Test rating 1` (string)
+
+## Skillmatrix Resource (Skillmatrix)
++ ratings (array[Rating])
++ _links
+    + self
+        + href: `/skillmatrix/1aa272d3-2c06-46f6-825d-e35228084b82` (string)
