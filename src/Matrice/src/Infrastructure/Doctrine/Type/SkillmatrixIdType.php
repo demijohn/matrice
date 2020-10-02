@@ -25,10 +25,6 @@ final class SkillmatrixIdType extends UuidType
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
-        if ($value instanceof SkillmatrixId) {
-            $value = $value->toUuid();
-        }
-
         return parent::convertToDatabaseValue($value, $platform);
     }
 }
