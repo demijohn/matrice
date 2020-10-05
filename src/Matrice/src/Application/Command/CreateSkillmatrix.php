@@ -15,13 +15,7 @@ final class CreateSkillmatrix
 
     private SkillCollection $skills;
 
-    // TODO: zvazit ci potrebujem factory metodu ked je rovnaka ako konstruktor
-    public static function create(SkillmatrixId $id, PersonCollection $persons, SkillCollection $skills): self
-    {
-        return new self($id, $persons, $skills);
-    }
-
-    private function __construct(SkillmatrixId $id, PersonCollection $persons, SkillCollection $skills)
+    public function __construct(SkillmatrixId $id, PersonCollection $persons, SkillCollection $skills)
     {
         $this->id = $id;
         $this->persons = $persons;

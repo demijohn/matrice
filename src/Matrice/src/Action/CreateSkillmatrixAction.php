@@ -66,7 +66,7 @@ final class CreateSkillmatrixAction implements RequestHandlerInterface
         $persons = PersonCollection::fromArray($data['persons']);
         $skills = SkillCollection::fromArray($data['skills']);
 
-        $command = CreateSkillmatrix::create($skillmatrixId, $persons, $skills);
+        $command = new CreateSkillmatrix($skillmatrixId, $persons, $skills);
         $this->commandBus->handle($command);
 
         $displayRequest = $request->withAttribute('id', (string) $command->getId());
