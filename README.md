@@ -1,150 +1,250 @@
-# Mezzio Skeleton and Installer
+# Matrice
 
-[![Build Status](https://travis-ci.org/mezzio/mezzio-skeleton.svg?branch=master)](https://travis-ci.org/mezzio/mezzio-skeleton)
-[![Coverage Status](https://coveralls.io/repos/github/mezzio/mezzio-skeleton/badge.svg?branch=master)](https://coveralls.io/github/mezzio/mezzio-skeleton?branch=master)
+## About project
 
-*Begin developing PSR-15 middleware applications in seconds!*
+Účelom tohoto projektu je si vyskúšať niektoré programovacie koncepty. Projekt používa minimalistický PHP framework [mezzio](https://github.com/mezzio/mezzio) (bývalý Zend Expressive), ktorý je [PSR-15](https://www.php-fig.org/psr/psr-15/) kompatibilný, t.j na spracovanie requestov využíva systém middleware.
 
-[mezzio](https://github.com/mezzio/mezzio) builds on
-[laminas-stratigility](https://github.com/laminas/laminas-stratigility) to
-provide a minimalist PSR-15 middleware framework for PHP with routing, DI
-container, optional templating, and optional error handling capabilities.
+Názov *Matrice* (La Matrice) je z taliančiny a znamená matica. Zvolil som ho pretože aj názov frameworku je z taliančiny (Mezzio). V kóde ale používam anglické Skillmatrix.
 
-This installer will setup a skeleton application based on mezzio by
-choosing optional packages based on user input as demonstrated in the following
-screenshot:
+## Project domain
 
-![screenshot-installer](https://cloud.githubusercontent.com/assets/459648/10410494/16bdc674-6f6d-11e5-8190-3c1466e93361.png)
+Skill = zručnosť, schopnosť, vedomosť.  
+V projekte riešim vytváranie tzv. matice skillov. Matica skillov je tabuľka kde je každému človeku priradené hodnotenie (skóre) k určitej zručnosti.
 
-The user selected packages are saved into `composer.json` so that everyone else
-working on the project have the same packages installed. Configuration files and
-templates are prepared for first use. The installer command is removed from
-`composer.json` after setup succeeded, and all installer related files are
-removed.
-
-## Getting Started
-
-Start your new Mezzio project with composer:
+Príklad matice skillov:
 
 ```bash
-$ composer create-project mezzio/mezzio-skeleton <project-path>
++--------+----------------------+-------------------+-----------------------+
+|        | Programming Language | Database Concepts | Debugging & Profiling |
++---------------------------------------------------------------------------+
+| Tomas  |          1           |         1         |           2           |
++---------------------------------------------------------------------------+
+| Peter  |          4           |         2         |           4           |
++---------------------------------------------------------------------------+
+| Michal |          5           |         3         |           3           |
++--------+----------------------+-------------------+-----------------------+
 ```
 
-After choosing and installing the packages you want, go to the
-`<project-path>` and start PHP's built-in web server to verify installation:
+Riešená je iba backendová časť vo forme REST API.
+
+
+## Persistence layer
+
+Projekt používa repository pattern (interface SkillmatrixRepository), konkrétne sú dáta ukladané do MySQL databáze cez Doctrine (DoctrineSkillmatrixRepository implements SkillmatrixRepository).
+
+Dáta v databáze sú pre zjednodušenie uložené vo "flat" podobe v jednej tabuľke *skillmatrix*. Entity *Person*, *Skill*, *Rating* nemajú vlastné DB tabuľky ale sú uložené ako JSON v tabuľke *skillmatrix*.
+
+Všetky ID sú typu UUID:
+ - ID entity dá sa generovať ešte pred vložením do DB
+ - UUID je jedinečné pre všetky entity naprieč tabuľami, serverami
+ - je bezpečné použiť ID v URL, nejde uhádnuť ďalší záznam v DB ako u auto-incremental primary key
+
+**TODO**: Teraz je v MySQL skillmatrix ID stĺpec typu CHAR(36). To je neefektívne z pohľadu indexu, lepšie je BINARY(16), MySQL 8 má funkcie na ľahšie použitie UUID. U ostatných entít to je jedno pretože nemajú vlastnú tabuľku. Pre entitu *Skill* je prirodzenejšie ID typu natural (Programming Language => programming_language), nie UUID.
+
+ID entity generuje Repository metódou *nextIdentity()* pretože ID entity by som mal vedieť vygenerovať ešte pred uložením entity do repository (entita by mala byť validná hneď po vytvorení, nie až po uložení). Keď generujem ID entity v repository môžem tak implementovať nielen gnerovanie ID typu UUID ale aj sekvencie alebo auto-increment.
+
+## Command Bus
+
+V projekte používam pre väčšiu prehladnosť na vykonanie akcii pattern [Command Bus](https://en.wikipedia.org/wiki/Command_pattern). Command je objekt s dátami, ktoré určujú čo chce user vykonať. Handler je kód ktorý vykonáva daný Command. Každý Command má presne jeden handler. Používam knižnicu [thephpleague/tactician](https://github.com/thephpleague/tactician).
+
+## Validation
+
+Na validovanie vstupných dát používam knižnicu [beberlei/assert](https://github.com/beberlei/assert) upravenú tak aby vyhadzovala výnimky vo formáte *ProblemDetails*. 
+
+## REST API
+
+Dokumentácia API vo formáte [API Blueprint](docs/api.apib) a vo formáte [HTML](docs/api.html).
+
+Telo requestu (ak sa posiela) je typu JSON (application/json), response je typu [JSON HAL](https://tools.ietf.org/html/draft-kelly-json-hal-08) (application/hal+json).
+Použitá je knižnica [mezzio/mezzio-hal](https://github.com/mezzio/mezzio-hal).
+
+Chybové stavy sa vracajú podľa štandardu [Problem Details](https://tools.ietf.org/html/rfc7807) (application/problem+json).
+Použitá je knižnica [mezzio/mezzio-problem-details](https://github.com/mezzio/mezzio-problem-details).
+
+Na testovanie API pri vývoji je dobrý nástroj Postman.
+
+### Vytvorenie novej matice:
 
 ```bash
-$ composer run --timeout=0 serve
+POST /skillmatrix
 ```
 
-You can then browse to http://localhost:8080.
+Body:  
+```bash
+{
+	"persons": [
+		{
+			"id": "1df4a735-88b3-4590-a1fe-cde6e8c1bd73",
+            "name": "Michal"
+		},
+		{
+			"id": "71fb2218-c6e4-4293-a590-399fe7de70c4",
+			"name": "Vlado"
+		},
+		{
+			"id": "f1cdd62e-7df1-4f69-9acf-0ea80b98c52a",
+			"name": "Tibor"
+		}
+	],
+	"skills": [
+		{
+			"id": "0ae8b2a5-9b88-41a0-acd6-e929578de254",
+			"name": "Programming Language"
+		},
+		{
+			"id": "482362ba-fa9d-497a-b91a-f11547ca09e6",
+			"name": "Database Concepts"
+		},
+		{
+			"id": "a9b10288-6381-4f2a-9e9e-96f6bbc96bf2",
+			"name": "Debugging & Profiling"
+		},
+		{
+			"id": "e92d2416-a58e-4b59-b6dc-eae991142366",
+			"name": "Client-side Scripting"
+		}
+	]
+}
+```
 
-> ### Linux users
->
-> On PHP versions prior to 7.1.14 and 7.2.2, this command might not work as
-> expected due to a bug in PHP that only affects linux environments. In such
-> scenarios, you will need to start the [built-in web
-> server](http://php.net/manual/en/features.commandline.webserver.php) yourself,
-> using the following command:
->
-> ```bash
-> $ php -S 0.0.0.0:8080 -t public/ public/index.php
-> ```
+### Pridanie hodnotenia do matice:
 
-> ### Setting a timeout
->
-> Composer commands time out after 300 seconds (5 minutes). On Linux-based
-> systems, the `php -S` command that `composer serve` spawns continues running
-> as a background process, but on other systems halts when the timeout occurs.
->
-> As such, we recommend running the `serve` script using a timeout. This can
-> be done by using `composer run` to execute the `serve` script, with a
-> `--timeout` option. When set to `0`, as in the previous example, no timeout
-> will be used, and it will run until you cancel the process (usually via
-> `Ctrl-C`). Alternately, you can specify a finite timeout; as an example,
-> the following will extend the timeout to a full day:
->
-> ```bash
-> $ composer run --timeout=86400 serve
-> ```
-
-## Troubleshooting
-
-If the installer fails during the ``composer create-project`` phase, please go
-through the following list before opening a new issue. Most issues we have seen
-so far can be solved by `self-update` and `clear-cache`.
-
-1. Be sure to work with the latest version of composer by running `composer self-update`.
-2. Try clearing Composer's cache by running `composer clear-cache`.
-
-If neither of the above help, you might face more serious issues:
-
-- Info about the [zlib_decode error](https://github.com/composer/composer/issues/4121).
-- Info and solutions for [composer degraded mode](https://getcomposer.org/doc/articles/troubleshooting.md#degraded-mode).
-
-## Application Development Mode Tool
-
-This skeleton comes with [laminas-development-mode](https://github.com/laminas/laminas-development-mode). 
-It provides a composer script to allow you to enable and disable development mode.
-
-### To enable development mode
-
-**Note:** Do NOT run development mode on your production server!
+Jedna osoba v matici môže mať priradené len jedno hodnotenie ku každému skillu. Ak hodnotenie už existuje vyhodím výnimku *RatingAlreadyExists*.
 
 ```bash
-$ composer development-enable
+PUT /skillmatrix/{{matrixId}}/ratings
 ```
 
-**Note:** Enabling development mode will also clear your configuration cache, to 
-allow safely updating dependencies and ensuring any new configuration is picked 
-up by your application.
+Body:  
+```bash
+{
+	"personId": "1df4a735-88b3-4590-a1fe-cde6e8c1bd73",
+	"skillId": "0ae8b2a5-9b88-41a0-acd6-e929578de254",
+	"reviewer": {
+		"id": "2a264d46-2ca0-4bb2-8c79-b0b5aa7aec28",
+		"name": "Tomas"
+	},
+	"score": 3,
+	"note": "Test rating 1"
+}
+```
 
-### To disable development mode
+### Získanie matice:
 
 ```bash
-$ composer development-disable
+GET /skillmatrix/{{matrixId}}
 ```
 
-### Development mode status
+Response:
 
 ```bash
-$ composer development-status
+{
+    "id": "50483c18-d5a4-4230-b253-4b1d962da756",
+    "persons": [
+        {
+            "id": "1df4a735-88b3-4590-a1fe-cde6e8c1bd73",
+            "name": "Michal"
+        },
+        {
+            "id": "71fb2218-c6e4-4293-a590-399fe7de70c4",
+            "name": "Vlado"
+        },
+        {
+            "id": "f1cdd62e-7df1-4f69-9acf-0ea80b98c52a",
+            "name": "Tibor"
+        }
+    ],
+    "skills": [
+        {
+            "id": "0ae8b2a5-9b88-41a0-acd6-e929578de254",
+            "name": "Programming Language"
+        },
+        {
+            "id": "482362ba-fa9d-497a-b91a-f11547ca09e6",
+            "name": "Database Concepts"
+        },
+        {
+            "id": "a9b10288-6381-4f2a-9e9e-96f6bbc96bf2",
+            "name": "Debugging & Profiling"
+        },
+        {
+            "id": "e92d2416-a58e-4b59-b6dc-eae991142366",
+            "name": "Client-side Scripting"
+        }
+    ],
+    "ratings": [
+        {
+            "personId": "1df4a735-88b3-4590-a1fe-cde6e8c1bd73",
+            "skillId": "0ae8b2a5-9b88-41a0-acd6-e929578de254",
+            "reviewer": {
+                "id": "2a264d46-2ca0-4bb2-8c79-b0b5aa7aec28",
+                "name": "Tomas"
+            },
+            "score": 3,
+            "note": "Test rating 1",
+            "created": "2020-03-17T20:20:31+00:00"
+        }
+    ],
+    "_links": {
+        "self": {
+            "href": "http://127.0.0.1:10100/skillmatrix/50483c18-d5a4-4230-b253-4b1d962da756"
+        }
+    }
+}
 ```
 
-## Configuration caching
+## Installation
 
-By default, the skeleton will create a configuration cache in
-`data/config-cache.php`. When in development mode, the configuration cache is
-disabled, and switching in and out of development mode will remove the
-configuration cache.
+1. Naklonovať GIT repozitár:  
+`git clone https://github.com/demijohn/matrice.git`
 
-You may need to clear the configuration cache in production when deploying if
-you deploy to the same directory. You may do so using the following:
+2. Spustiť Docker:  
+`docker-compose up -d`  
+`docker-compose exec app bash`
 
-```bash
-$ composer clear-config-cache
+3. Nainštalovať závislosti:  
+ `composer install`
+
+4. Vytvoriť .env súbor (prekopírovaním z distribučného .env.local):    
+`cp .env.local .env`  
+
+5. Spustiť databázové migrácie:  
+`./vendor/bin/doctrine-migrations migrations:migrate`
+
+Databáza *matrice* sa vytvorí automaticky namountovaním súboru:  
+`./docker/mysql-init/create_schemas.sql`  
+ako entry pointu pre MySQL kontainer (viď `docker-compose.yml`). 
+
+## Tests
+
+Používám [PHPUnit](https://github.com/sebastianbergmann/phpunit). Spustenie testov:  
+`./vendor/bin/phpunit`
+
+Zatiaľ mám len jeden integračný test (CreateSkillmatrixActionTest), ktorý testuje response z API a kontroluje vrátený JSON. Na integračné testy som si vytvoril vlastnú triedu *TestCase* (extenduje TestCase PHPUnitu). V tejto triede sú metódy (get(), post(), patch()) na volanie API a metóda assertResponse() na testovanie response. V testoch sa API nevolá cez vrstvu HTTP ale priamo sa vytvoria objekty Request a posielajú sa do frameworku (handle() metóda z Mezzio\Application).
+
+```
+Create Skillmatrix Action (MatriceTest\Integration\Action\CreateSkillmatrixAction)
+ ✔ Create skillmatrix  1381 ms
+ ✔ Create skillmatrix with missing parameters  59 ms
+ ✔ Create skillmatrix with invalid parameters  50 ms
+
+Time: 00:01.521, Memory: 6.00 MB
+
+OK (3 tests, 24 assertions)
 ```
 
-You may also change the location of the configuration cache itself by editing
-the `config/config.php` file and changing the `config_cache_path` entry of the
-local `$cacheConfig` variable.
+**TODO**: Napísať aj nejaký unit test.
 
-## Skeleton Development
+## Static Analysis
 
-This section applies only if you cloned this repo with `git clone`, not when you
-installed mezzio with `composer create-project ...`.
+Na statickú analýzu kódu používam [PHPStan](https://github.com/phpstan/phpstan) na max. level. Spúšta sa:  
+`./vendor/bin/phpstan analyse`
 
-If you want to run tests against the installer, you need to clone this repo and
-setup all dependencies with composer.  Make sure you **prevent composer running
-scripts** with `--no-scripts`, otherwise it will remove the installer and all
-tests.
+**TODO**: Vytvoriť v *composer.json* skript na spúštanie PHPStan-u.
 
-```bash
-$ composer update --no-scripts
-$ composer test
-```
+## Coding Style
 
-Please note that the installer tests remove installed config files and templates
-before and after running the tests.
+Na udržiavanie jednotného štýlu zdrojového kódu používam [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer). Spúšta sa:  
+`./vendor/bin/phpcs -p -s`
 
-Before contributing read [the contributing guide](docs/CONTRIBUTING.md).
+**TODO**: Vytvoriť v *composer.json* skript na spúštanie PHP_CodeSniffer-u.
