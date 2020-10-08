@@ -49,7 +49,7 @@ class Skillmatrix implements JsonSerializable
     public function addRating(Rating $rating): void
     {
         if ($this->ratingExists($rating)) {
-            throw new RatingAlreadyExists('Rating already exists.');
+            throw RatingAlreadyExists::create($this->id, $rating);
         }
 
         $this->ratings = $this->ratings === null ?

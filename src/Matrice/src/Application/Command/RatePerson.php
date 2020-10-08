@@ -20,7 +20,7 @@ final class RatePerson
 
     private int $score;
 
-    private string $note;
+    private ?string $note;
 
     public static function fromArray(SkillmatrixId $skillmatrixId, array $data): self
     {
@@ -30,7 +30,7 @@ final class RatePerson
             SkillId::fromString($data['skillId']),
             Reviewer::fromArray($data['reviewer']),
             $data['score'],
-            $data['note'],
+            $data['note'] ?? null,
         );
     }
 
@@ -40,7 +40,7 @@ final class RatePerson
         SkillId $skillId,
         Reviewer $reviewer,
         int $score,
-        string $note
+        ?string $note
     ) {
         $this->skillmatrixId = $id;
         $this->personId = $personId;
@@ -75,7 +75,7 @@ final class RatePerson
         return $this->score;
     }
 
-    public function getNote(): string
+    public function getNote(): ?string
     {
         return $this->note;
     }

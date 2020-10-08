@@ -32,13 +32,15 @@ final class RatePersonAction implements RequestHandlerInterface
 
         Validate::lazy()
             ->that($data, '$')->tryAll()
-            ->keyExists('personId')->keyExists('skillId')->keyExists('reviewer')
+            ->keyExists('personId')->keyExists('skillId')->keyExists('reviewer')->keyExists('score')
             ->that($data['personId'] ?? null, '$.personId')->uuid()
             ->that($data['skillId'] ?? null, '$.skillId')->uuid()
             ->that($data['reviewer'] ?? [], '$.reviewer')->isArray()
             ->that($data['reviewer'], '$.reviewer')->tryAll()->keyExists('id')->keyExists('name')
             ->that($data['reviewer']['id'] ?? null, '$.reviewer.id')->uuid()
             ->that($data['reviewer']['name'] ?? '', '$.reviewer.name')->minLength(1)
+            ->that($data['score'] ?? null, '$.score')->integer()->between(1, 5)
+            ->that($data['note'] ?? null, '$.note')->nullOr()->minLength(1)
             ->that($skillmatrixIdParameter, 'id')->uuid()
             ->verifyNow();
 
