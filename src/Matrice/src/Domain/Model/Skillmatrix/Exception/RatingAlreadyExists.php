@@ -23,7 +23,7 @@ class RatingAlreadyExists extends RuntimeException implements ProblemDetailsExce
             'Skillmatrix "%s" already contains rating for Person "%s" and Skill "%s"',
             $skillmatrixId,
             $rating->getPersonId(),
-            $rating->getSkillId()
+            $rating->getSkillId(),
         );
 
         return new self($message);
@@ -32,6 +32,7 @@ class RatingAlreadyExists extends RuntimeException implements ProblemDetailsExce
     private function __construct(string $message = '')
     {
         parent::__construct($message);
+
         $this->status = self::STATUS;
         $this->detail = $message;
         $this->title = self::TITLE;

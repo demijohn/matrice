@@ -24,6 +24,7 @@ class SkillmatrixNotFound extends RuntimeException implements ProblemDetailsExce
     private function __construct(string $message = '')
     {
         parent::__construct($message);
+
         $this->status = self::STATUS;
         $this->detail = $message;
         $this->title = self::TITLE;
