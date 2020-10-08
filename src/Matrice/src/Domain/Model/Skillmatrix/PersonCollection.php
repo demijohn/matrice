@@ -22,7 +22,7 @@ final class PersonCollection implements IteratorAggregate, Countable, JsonSerial
         return new self(...$persons);
     }
 
-    public function __construct(Person ...$persons)
+    private function __construct(Person ...$persons)
     {
         $this->persons = $persons;
     }

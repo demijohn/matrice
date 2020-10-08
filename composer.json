@@ -66,6 +66,7 @@
     "require-dev": {
         "doctrine/migrations": "^2.2",
         "filp/whoops": "^2.1.12",
+        "jangregor/phpstan-prophecy": "^0.8.0",
         "laminas/laminas-development-mode": "^3.1",
         "mezzio/mezzio-tooling": "^1.0",
         "phpspec/prophecy-phpunit": "^2.0",
