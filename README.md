@@ -220,20 +220,39 @@ ako entry pointu pre MySQL kontainer (viď `docker-compose.yml`).
 Používám [PHPUnit](https://github.com/sebastianbergmann/phpunit). Spustenie testov:  
 `./vendor/bin/phpunit`
 
-Zatiaľ mám len jeden integračný test (CreateSkillmatrixActionTest), ktorý testuje response z API a kontroluje vrátený JSON. Na integračné testy som si vytvoril vlastnú triedu *TestCase* (extenduje TestCase PHPUnitu). V tejto triede sú metódy (get(), post(), patch()) na volanie API a metóda assertResponse() na testovanie response. V testoch sa API nevolá cez vrstvu HTTP ale priamo sa vytvoria objekty Request a posielajú sa do frameworku (handle() metóda z Mezzio\Application).
+Integračne testy (CreateSkillmatrixActionTest, RatePersonActionTest) testujú response z API a kontroluje vrátený JSON. Na integračné testy som si vytvoril vlastnú triedu *TestCase* (extenduje TestCase PHPUnitu). V tejto triede sú metódy (get(), post(), patch()) na volanie API a metóda assertResponse() na testovanie response. V testoch sa API nevolá cez vrstvu HTTP ale priamo sa vytvoria objekty Request a posielajú sa do frameworku (handle() metóda z Mezzio\Application).
+
+V testoch command handlerov testujem či je zavolána príslušná metóda z repository. Používam knižnicu [Prophecy](https://github.com/phpspec/prophecy-phpunit) integrovanú do PHPUnit.
 
 ```
+PHPUnit 9.4.0 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 7.4.7
+Configuration: /var/www/phpunit.xml.dist
+
+Create Skillmatrix Handler (MatriceTest\Handler\CreateSkillmatrixHandler)
+ ✔ Create  165 ms
+
+Rate Person Handler (MatriceTest\Handler\RatePersonHandler)
+ ✔ Create  27 ms
+
 Create Skillmatrix Action (MatriceTest\Integration\Action\CreateSkillmatrixAction)
- ✔ Create skillmatrix  1381 ms
- ✔ Create skillmatrix with missing parameters  59 ms
+ ✔ Create skillmatrix  615 ms
+ ✔ Create skillmatrix with missing parameters  57 ms
  ✔ Create skillmatrix with invalid parameters  50 ms
 
-Time: 00:01.521, Memory: 6.00 MB
+Rate Person Action (MatriceTest\Integration\Action\RatePersonAction)
+ ✔ Rate person  61 ms
+ ✔ Rate for non existing skillmatrix  55 ms
+ ✔ Rate already existing rating  53 ms
 
-OK (3 tests, 24 assertions)
+Doctrine Skillmatrix Repository (MatriceTest\Repository\DoctrineSkillmatrixRepository)
+ ✔ Skillmatrix not found exception  38 ms
+
+Time: 00:01.142, Memory: 8.00 MB
+
+OK (9 tests, 40 assertions)
 ```
-
-**TODO**: Napísať aj nejaký unit test.
 
 ## Static Analysis
 
