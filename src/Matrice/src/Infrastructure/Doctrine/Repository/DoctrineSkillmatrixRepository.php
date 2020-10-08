@@ -24,7 +24,7 @@ final class DoctrineSkillmatrixRepository implements SkillmatrixRepository
         $skillmatrix = $this->em->find(Skillmatrix::class, $skillmatrixId);
 
         if ($skillmatrix === null) {
-            throw new SkillmatrixNotFound(sprintf('Skillmatrix "%s" not found', $skillmatrixId));
+            throw SkillmatrixNotFound::create($skillmatrixId);
         }
 
         return $skillmatrix;

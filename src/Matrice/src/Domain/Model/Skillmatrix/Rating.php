@@ -17,7 +17,7 @@ final class Rating implements JsonSerializable
 
     private int $score;
 
-    private string $note;
+    private ?string $note;
 
     private DateTime $created;
 
@@ -26,10 +26,8 @@ final class Rating implements JsonSerializable
         SkillId $skillId,
         Reviewer $reviewer,
         int $score,
-        string $note
+        ?string $note
     ): self {
-        Assertion::between($score, 0, 5);
-
         return new self(
             $personId,
             $skillId,
@@ -47,7 +45,7 @@ final class Rating implements JsonSerializable
             SkillId::fromString($data['skillId']),
             Reviewer::fromArray($data['reviewer']),
             $data['score'],
-            $data['note'],
+            $data['note'] ?? null,
             new DateTime($data['created']),
         );
     }
@@ -57,9 +55,11 @@ final class Rating implements JsonSerializable
         SkillId $skillId,
         Reviewer $reviewer,
         int $score,
-        string $note,
+        ?string $note,
         DateTime $created
     ) {
+        Assertion::between($score, 1, 5);
+
         $this->personId = $personId;
         $this->skillId = $skillId;
         $this->reviewer = $reviewer;
@@ -88,7 +88,7 @@ final class Rating implements JsonSerializable
         return $this->score;
     }
 
-    public function getNote(): string
+    public function getNote(): ?string
     {
         return $this->note;
     }
